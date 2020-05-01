@@ -3,6 +3,9 @@ import os
 from termcolor import colored
 import sys
 import time
+import folium
+import webbrowser
+
 
 reaper_graphic = '''
 ██████╗ ███████╗ █████╗ ██████╗ ███████╗██████╗ 
@@ -12,7 +15,6 @@ reaper_graphic = '''
 ██║  ██║███████╗██║  ██║██║     ███████╗██║  ██║
 ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝
 '''
-
 while True:
     os.system('clear')
     print(colored(reaper_graphic, 'red'))
@@ -25,9 +27,15 @@ while True:
         res = gip.record_by_addr(ip)
         for key,val in res.items():
             print(colored('%s : %s' % (key,val), 'red'))
+        latitude = res.get('latitude')
+        longitude = res.get('longitude')
+        m = folium.Map(location=[latitude,longitude], zoom_start=4)
+        folium.Marker(location=[latitude,longitude], popup="IP Location").add_to(m)
+        m.save('location.html')
+        filename = 'location.html'
+        webbrowser.open_new_tab(filename)
         sys.exit(1)
     except Exception as e:
         print(f'ERROR: {e}')
-        print('CHECK IP VALIDITY')
         time.sleep(3)
         continue
